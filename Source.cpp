@@ -1,56 +1,46 @@
 #include <iostream>
-#include <map>
-#include <set>
-#include <string>
+#include <ctime>
+#include <cmath>
+#include <algorithm>
 
 using namespace std;
 
-map<long long, int> map_name;
-set<string> dif_name;
+const int MAXN = 100;
 
-const int p = 127; // только простое
-const long long mod = 1125899839733759; //модуль хеша (от 0 до 1125899839733759 (только простое)) // 1e9+7
-
-long long bild_hash(string s)
-{
-	long long hash = 0;
-	for (int i = s.length() - 1; i >= 0; i--)
-	{
-		hash *= p;
-		hash += s[i];
-		hash %= mod;
-	}
-	return (hash);
-}
+int MS[MAXN][MAXN], Mdist[MAXN][MAXN];
 
 int main()
 {
 	int n;
-	cout << "The number of names = ";
-	cin >> n; // общее количество имен
+	cin >> n; 
 
-	for (int i = 0; i < n; i++)
+	for (int i = 0; i < n; i++)  //матрица смежности
 	{
-		string s;
-		cin >> s; // ввод имени
-		int sz = dif_name.size(); // различные имена на  iтом шаге
-		dif_name.insert(s); //  добавление в множество новое имя
-		long long t = bild_hash(s); // вычислить хеш имени
-		if (sz != dif_name.size()) // если истинно то у нас есть новое имя
+		for (int j = 0; j < n; j++)
 		{
-			map_name[t] = 1;
+			int x;
+			cin >> x;
+			MS[i][j] = Mdist[i][j] = x;
+
 		}
-		else
-			map_name[t]++; // иначе + 1 имя
 	}
 
-	for (set<string>::iterator it = dif_name.begin(); it != dif_name.end(); it++) // перебор всех различных имен в множестве
+	cout << endl;
+
+	for (int k = 0; k < n; k++) // алгоритм флойда
+		for (int i = 0; i < n; i++)
+			for (int j = 0; j < n; j++)
+				Mdist[i][j] = min(Mdist[i][j], Mdist[i][k] + Mdist[k][j]);
+
+	for (int i = 0; i < n; i++) // вывод ответа
 	{
-		long long t = bild_hash(*it); // вычисление хеша имени
-		cout << *it << " " << map_name[t] << endl; // вывод имени и сколько оно раз встретилось
+		for (int j = 0; j < n; j++)
+		{
+			cout << Mdist[i][j] << " ";
+		}
+		cout << endl;
 	}
 
 	system("pause");
-
-	return 0;
+	return (0);
 }
